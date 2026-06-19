@@ -1,0 +1,21 @@
+{
+  "name": "Espaço Eli Trassi",
+  "short_name": "Eli Trassi",
+  "description": "App de agendamentos e controle para Espaço Eli Trassi",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#d946ef",
+  "icons": [
+    {
+      "src": "https://placehold.co/192x192/d946ef/ffffff.png?text=E",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://placehold.co/512x512/d946ef/ffffff.png?text=E",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
