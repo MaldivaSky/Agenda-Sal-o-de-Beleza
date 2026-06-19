@@ -15,7 +15,7 @@ export default function Login() {
     if (success) {
       navigate('/');
     } else {
-      alert('Credenciais inválidas. (Dica de teste: admin@elitrassi.com / admin)');
+      alert('Credenciais inválidas. (Dica de teste: elitrassi@gmail.com / admin)');
     }
   };
 
