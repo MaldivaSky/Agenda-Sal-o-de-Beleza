@@ -70,11 +70,16 @@ export default function Login() {
             </div>
           </form>
           
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-3">
             <p className="text-sm text-gray-600">
               Primeira vez aqui?{' '}
               <Link to="/registrar" className="font-medium text-fuchsia-600 hover:text-fuchsia-500">
                 Crie sua conta
+              </Link>
+            </p>
+            <p className="text-sm">
+              <Link to="/" className="font-medium text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1">
+                Voltar para a página inicial
               </Link>
             </p>
           </div>

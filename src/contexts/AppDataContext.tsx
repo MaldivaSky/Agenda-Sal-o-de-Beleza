@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { AppState, User, Appointment, ProcedureHistory, Service, EliStatus, PortfolioItem } from '../types';
 import { Storage } from '../store/storage';
+import { doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 interface AppDataContextType {
   state: AppState;
@@ -35,125 +37,96 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const saveAndSetState = async (newState: AppState) => {
-    await Storage.saveState(newState);
-    setState(newState);
-  };
-
   const registerClient = async (userInfo: Omit<User, 'id' | 'role'>) => {
-    // Basic mock check
     if (state.users.find((u) => u.email === userInfo.email)) {
       alert("Email já cadastrado");
       return null;
     }
     
-    const newUser: User = {
-      ...userInfo,
-      id: `client-${Date.now()}`,
-      role: 'CLIENT'
-    };
-    
-    await saveAndSetState({
-      ...state,
-      users: [...state.users, newUser]
-    });
+    const newUser: User = { ...userInfo, id: `client-${Date.now()}`, role: 'CLIENT' };
+    await setDoc(doc(db, 'users', newUser.id), newUser);
+    setState(prev => ({ ...prev, users: [...prev.users, newUser] }));
     return newUser;
   };
 
   const addAppointment = async (appointment: Omit<Appointment, 'id'>) => {
-    const newAppointment: Appointment = {
-      ...appointment,
-      id: `appt-${Date.now()}`
-    };
-    await saveAndSetState({
-      ...state,
-      appointments: [...state.appointments, newAppointment]
-    });
+    const newAppointment: Appointment = { ...appointment, id: `appt-${Date.now()}` };
+    await setDoc(doc(db, 'appointments', newAppointment.id), newAppointment);
+    setState(prev => ({ ...prev, appointments: [...prev.appointments, newAppointment] }));
   };
 
   const updateAppointmentStatus = async (id: string, status: Appointment['status']) => {
-    await saveAndSetState({
-      ...state,
-      appointments: state.appointments.map(a => a.id === id ? { ...a, status } : a)
-    });
+    const updated = state.appointments.find(a => a.id === id);
+    if (updated) {
+      const merged = { ...updated, status };
+      await setDoc(doc(db, 'appointments', id), merged);
+      setState(prev => ({ ...prev, appointments: prev.appointments.map(a => a.id === id ? merged : a) }));
+    }
   };
 
   const updateAppointment = async (id: string, updates: Partial<Appointment>) => {
-    await saveAndSetState({
-      ...state,
-      appointments: state.appointments.map(a => a.id === id ? { ...a, ...updates } : a)
-    });
+    const updated = state.appointments.find(a => a.id === id);
+    if (updated) {
+      const merged = { ...updated, ...updates };
+      await setDoc(doc(db, 'appointments', id), merged);
+      setState(prev => ({ ...prev, appointments: prev.appointments.map(a => a.id === id ? merged : a) }));
+    }
   };
 
   const addProcedureHistory = async (history: Omit<ProcedureHistory, 'id'>) => {
-    const newHistory: ProcedureHistory = {
-      ...history,
-      id: `hist-${Date.now()}`
-    };
-    await saveAndSetState({
-      ...state,
-      history: [...state.history, newHistory]
-    });
+    const newHistory: ProcedureHistory = { ...history, id: `hist-${Date.now()}` };
+    await setDoc(doc(db, 'history', newHistory.id), newHistory);
+    setState(prev => ({ ...prev, history: [...prev.history, newHistory] }));
   };
 
   const updateProcedurePhoto = async (id: string, photoType: 'before' | 'after', base64: string) => {
-    await saveAndSetState({
-      ...state,
-      history: state.history.map(h => {
-        if (h.id === id) {
-          return {
-            ...h,
-            [photoType === 'before' ? 'beforePhoto' : 'afterPhoto']: base64
-          };
-        }
-        return h;
-      })
-    });
+    const h = state.history.find(h => h.id === id);
+    if (h) {
+      const updated = { ...h, [photoType === 'before' ? 'beforePhoto' : 'afterPhoto']: base64 };
+      await setDoc(doc(db, 'history', id), updated);
+      setState(prev => ({ ...prev, history: prev.history.map(item => item.id === id ? updated : item) }));
+    }
   };
 
   const addService = async (service: Omit<Service, 'id'>) => {
-    const newService: Service = {
-      ...service,
-      id: `svc-${Date.now()}`
-    };
-    await saveAndSetState({
-      ...state,
-      services: [...state.services, newService]
-    });
+    const newService: Service = { ...service, id: `svc-${Date.now()}` };
+    await setDoc(doc(db, 'services', newService.id), newService);
+    setState(prev => ({ ...prev, services: [...prev.services, newService] }));
   };
 
   const updateService = async (id: string, serviceUpdate: Partial<Service>) => {
-    await saveAndSetState({
-      ...state,
-      services: state.services.map(s => s.id === id ? { ...s, ...serviceUpdate } : s)
-    });
+    const s = state.services.find(s => s.id === id);
+    if (s) {
+      const updated = { ...s, ...serviceUpdate };
+      await setDoc(doc(db, 'services', id), updated);
+      setState(prev => ({ ...prev, services: prev.services.map(i => i.id === id ? updated : i) }));
+    }
   };
 
   const deleteService = async (id: string) => {
-    await saveAndSetState({
-      ...state,
-      services: state.services.filter(s => s.id !== id)
-    });
+    await deleteDoc(doc(db, 'services', id));
+    setState(prev => ({ ...prev, services: prev.services.filter(s => s.id !== id) }));
   };
 
   const updateEliStatus = async (status: EliStatus) => {
-    await saveAndSetState({ ...state, eliStatus: status });
+    await setDoc(doc(db, 'metadata', 'main'), { eliStatus: status }, { merge: true });
+    setState(prev => ({ ...prev, eliStatus: status }));
   };
 
   const updateHeroImage = async (url: string) => {
-    await saveAndSetState({ ...state, heroImage: url });
+    await setDoc(doc(db, 'metadata', 'main'), { heroImage: url }, { merge: true });
+    setState(prev => ({ ...prev, heroImage: url }));
   };
 
   const addPortfolioItem = async (item: Omit<PortfolioItem, 'id'>) => {
-    const newItem: PortfolioItem = {
-      ...item,
-      id: `port-${Date.now()}`
-    };
-    await saveAndSetState({ ...state, portfolio: [newItem, ...state.portfolio] });
+    const newItem: PortfolioItem = { ...item, id: `port-${Date.now()}` };
+    await setDoc(doc(db, 'portfolio', newItem.id), newItem);
+    setState(prev => ({ ...prev, portfolio: [newItem, ...prev.portfolio] }));
   };
 
   const removePortfolioItem = async (id: string) => {
-    await saveAndSetState({ ...state, portfolio: state.portfolio.filter(p => p.id !== id) });
+    await deleteDoc(doc(db, 'portfolio', id));
+    setState(prev => ({ ...prev, portfolio: prev.portfolio.filter(p => p.id !== id) }));
   };
 
   return (

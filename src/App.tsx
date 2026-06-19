@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppDataProvider } from './contexts/AppDataContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout';
@@ -34,7 +34,7 @@ export default function App() {
   return (
     <AppDataProvider>
       <AuthProvider>
-        <HashRouter>
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<Portal />} />
             <Route path="/login" element={<Login />} />
@@ -71,7 +71,7 @@ export default function App() {
 
             </Route>
           </Routes>
-        </HashRouter>
+        </BrowserRouter>
       </AuthProvider>
     </AppDataProvider>
   );
