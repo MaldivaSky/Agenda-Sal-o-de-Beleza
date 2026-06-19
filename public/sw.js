@@ -1,14 +1,19 @@
 self.addEventListener('install', (e) => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.open('eli-store').then((cache) => cache.addAll([
-      '/',
-      '/index.html',
-    ])),
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => caches.delete(cache))
+      );
+    })
   );
+  self.clients.claim();
 });
 
 self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((response) => response || fetch(e.request)),
-  );
+  // Always fetch from network to avoid stale assets
+  e.respondWith(fetch(e.request));
 });
