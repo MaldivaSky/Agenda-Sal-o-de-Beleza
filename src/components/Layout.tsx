@@ -35,7 +35,8 @@ export default function Layout() {
     <div className="flex flex-col min-h-screen bg-gray-50 pb-16 md:pb-0">
       <header className="bg-fuchsia-600 text-white shadow-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <img src="/logo.svg" alt="Espaço Eli Trassi Logo" className="w-8 h-8 object-contain rounded-full bg-white p-0.5" />
             <h1 className="font-semibold text-lg">
               <Link to="/">Espaço Eli Trassi</Link>
             </h1>

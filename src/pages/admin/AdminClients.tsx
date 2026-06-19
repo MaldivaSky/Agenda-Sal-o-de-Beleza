@@ -1,14 +1,30 @@
 import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppDataContext';
-import { Camera, Search } from 'lucide-react';
+import { Camera, Search, Plus, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 export default function AdminClients() {
-  const { state, addProcedureHistory, updateProcedurePhoto } = useApp();
+  const { state, addProcedureHistory, updateProcedurePhoto, registerClient } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  
+  const [newClient, setNewClient] = useState({ name: '', email: '', phone: '', password: '' });
   
   const clients = state.users.filter(u => u.role === 'CLIENT' && u.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+  const handleRegisterClient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newClient.name || !newClient.email || !newClient.password || !newClient.phone) {
+        alert("Preencha todos os campos");
+        return;
+    }
+    const user = await registerClient(newClient);
+    if (user) {
+        setShowRegisterModal(false);
+        setNewClient({ name: '', email: '', phone: '', password: '' });
+    }
+  };
 
   // Conversão de arquivo para Base64
   const handlePhotoUpload = (clientId: string, e: React.ChangeEvent<HTMLInputElement>, type: 'before' | 'after', historyId?: string) => {
@@ -40,9 +56,18 @@ export default function AdminClients() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h2 className="text-2xl font-bold text-gray-900">Base de Clientes</h2>
-        <p className="text-gray-600">Histórico de procedimentos e fotos</p>
+      <header className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Base de Clientes</h2>
+          <p className="text-gray-600">Histórico de procedimentos e fotos</p>
+        </div>
+        <button 
+          onClick={() => setShowRegisterModal(true)}
+          className="bg-fuchsia-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-fuchsia-700 transition flex items-center gap-2"
+        >
+          <Plus className="w-5 h-5" />
+          Novo Cliente
+        </button>
       </header>
 
       <div className="relative">
@@ -57,6 +82,39 @@ export default function AdminClients() {
           onChange={e => setSearchTerm(e.target.value)}
         />
       </div>
+
+      {showRegisterModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden relative">
+            <div className="flex justify-between items-center p-6 border-b border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900">Cadastrar Novo Cliente</h3>
+              <button onClick={() => setShowRegisterModal(false)} className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition"><X className="w-5 h-5"/></button>
+            </div>
+            <form onSubmit={handleRegisterClient} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+                <input required type="text" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-fuchsia-500 focus:outline-none" value={newClient.name} onChange={e => setNewClient({...newClient, name: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                <input required type="email" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-fuchsia-500 focus:outline-none" value={newClient.email} onChange={e => setNewClient({...newClient, email: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp / Telefone</label>
+                <input required type="tel" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-fuchsia-500 focus:outline-none" value={newClient.phone} onChange={e => setNewClient({...newClient, phone: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Senha Padrão (para o cliente acessar)</label>
+                <input required type="text" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-fuchsia-500 focus:outline-none" value={newClient.password} onChange={e => setNewClient({...newClient, password: e.target.value})} />
+              </div>
+              <div className="pt-4 flex justify-end gap-3">
+                <button type="button" onClick={() => setShowRegisterModal(false)} className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition text-sm">Cancelar</button>
+                <button type="submit" className="bg-fuchsia-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-fuchsia-700 transition text-sm">Salvar Cliente</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <div className="space-y-6">
         {clients.length === 0 ? (

@@ -1,0 +1,37 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4a044e" /> <!-- fuchsia-950 -->
+      <stop offset="100%" stop-color="#701a75" /> <!-- fuchsia-900 -->
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="50%" stop-color="#fcd34d" />
+      <stop offset="100%" stop-color="#fef3c7" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="100" fill="url(#bg)"/>
+  
+  <!-- Outer elegant ring -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="url(#gold)" stroke-width="6" opacity="0.3" />
+  <circle cx="256" cy="256" r="160" fill="none" stroke="url(#gold)" stroke-width="2" opacity="0.5" stroke-dasharray="10 10"/>
+  
+  <!-- Elegant Scissors and Flower motif -->
+  <g transform="translate(192, 160) scale(1.6)" fill="none" stroke="url(#gold)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Scissor blades -->
+    <path d="M 50 100 L 20 20" />
+    <path d="M 30 100 L 60 20" />
+    <!-- Scissor handles -->
+    <circle cx="24" cy="116" r="12" />
+    <circle cx="56" cy="116" r="12" />
+    <circle cx="40" cy="65" r="3" fill="url(#gold)" />
+    
+    <!-- Flower/Leaf element overlaying -->
+    <path d="M 40 40 C 60 20 80 40 60 60 C 40 80 20 60 40 40 Z" fill="rgba(252,211,77,0.1)" stroke-width="3" />
+  </g>
+
+  <!-- Lettering -->
+  <text x="256" y="420" font-family="system-ui, sans-serif" font-weight="300" font-size="32" font-variant="small-caps" letter-spacing="8" fill="url(#gold)" text-anchor="middle">
+    Espaço Eli Trassi
+  </text>
+</svg>

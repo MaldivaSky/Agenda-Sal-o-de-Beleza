@@ -22,8 +22,8 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="w-16 h-16 bg-fuchsia-100 text-fuchsia-600 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Scissors className="w-8 h-8" />
+        <div className="w-20 h-20 mx-auto mb-4">
+          <img src="/logo.svg" alt="Espaço Eli Trassi Logo" className="w-full h-full object-contain rounded-full shadow-md border border-gray-100" />
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Espaço Eli Trassi</h2>
         <p className="mt-2 text-center text-sm text-gray-600">

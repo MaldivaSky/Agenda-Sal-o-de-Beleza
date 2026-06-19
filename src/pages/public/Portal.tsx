@@ -56,9 +56,9 @@ export default function Portal() {
       {/* Header Bar */}
       <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-fuchsia-600">
-            <Scissors className="w-6 h-6" />
-            <span className="font-bold text-xl tracking-tight text-gray-900">Espaço Eli Trassi</span>
+          <div className="flex items-center gap-3 text-fuchsia-600">
+            <img src="/logo.svg" alt="Espaço Eli Trassi Logo" className="w-10 h-10 object-contain rounded-full shadow-sm border border-fuchsia-100" />
+            <span className="font-bold text-xl tracking-tight text-gray-900 hidden sm:block">Espaço Eli Trassi</span>
           </div>
           <div className="flex items-center gap-4">
             <button 
